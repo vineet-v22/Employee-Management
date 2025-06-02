@@ -19,13 +19,20 @@ def get_db():
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    # Check if user already exists
     if db.query(User).filter(User.username == user.username).first():
         raise HTTPException(status_code=400, detail="Username already exists")
-    
+
+    # Hash password and create user
     hashed_password = get_password_hash(user.password)
-    new_user = User(username=user.username, password=hashed_password, role=user.role)
+    new_user = User(
+        username=user.username,
+        password=hashed_password,
+        role=user.role
+    )
     db.add(new_user)
     db.commit()
+    db.refresh(new_user)
     return {"message": "User registered successfully"}
 
 @router.post("/login")
@@ -36,3 +43,4 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     
     token = create_token(db_user)
     return {"access_token": token, "token_type": "bearer"}
+

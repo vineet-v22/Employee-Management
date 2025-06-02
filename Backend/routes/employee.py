@@ -88,12 +88,12 @@ def get_employee(employee_id: int, db: Session = Depends(get_db)):
 def delete_employee(
     employee_id: int,
     db: Session = Depends(get_db),
-    user=Depends(require_admin)  # Only admin can delete
+    user=Depends(require_admin)  # Admin only
 ):
     employee = db.query(Employee).filter(Employee.id == employee_id).first()
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
-
+    
     db.delete(employee)
     db.commit()
     return {"message": f"Employee with ID {employee_id} deleted successfully"}

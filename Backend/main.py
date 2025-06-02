@@ -4,7 +4,6 @@ from routes import employee,auth
 from database import engine, Base
 
 
-Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app.add_middleware(
@@ -17,3 +16,5 @@ app.add_middleware(
 
 app.include_router(employee.router)
 app.include_router(auth.router)
+
+Base.metadata.create_all(bind=engine)
